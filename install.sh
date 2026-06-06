@@ -51,8 +51,11 @@ phase0_preflight() {
 phase1_homebrew() {
   log "Phase 1 — Homebrew"
   if [ ! -x "$BREW_BIN" ] && ! command -v brew >/dev/null 2>&1; then
-    log "installing Homebrew — you will be prompted for your login password…"
-    NONINTERACTIVE=1 /bin/bash -c \
+    if [ ! -t 0 ]; then
+      die "Homebrew isn't installed yet and this step needs an INTERACTIVE terminal to type your Mac password. Open Terminal.app or iTerm and run:  ~/dotfiles/install.sh"
+    fi
+    log "installing Homebrew — you'll be prompted for your Mac login (sudo) password…"
+    /bin/bash -c \
       "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   fi
   eval "$("$BREW_BIN" shellenv)"
