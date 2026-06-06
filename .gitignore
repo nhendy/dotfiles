@@ -1,0 +1,8 @@
+# Cloned at install time (nhendy/myvimrc); not vendored into this repo.
+external/
+
+# Backups created by install.sh's link() helper
+*.pre-dotfiles.bak
+*.bak
+
+.DS_Store

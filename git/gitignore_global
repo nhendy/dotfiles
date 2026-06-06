@@ -1,0 +1,32 @@
+# Global gitignore -> ~/.config/git/ignore
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor / tooling
+*.swp
+*~
+.idea/
+.vscode/
+
+# Python / ML
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+.python-version
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+*.egg-info/
+
+# Environments / secrets
+.env
+.direnv/
+
+# Logs / data scratch
+*.log
+wandb/

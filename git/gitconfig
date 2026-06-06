@@ -1,0 +1,47 @@
+# ~/.gitconfig — managed by ~/dotfiles. Edit name/email below if needed.
+[user]
+	name = Nour Hendy
+	email = nhendy997@gmail.com
+
+[init]
+	defaultBranch = main
+
+[pull]
+	rebase = true
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true
+[rebase]
+	autoStash = true
+
+[core]
+	editor = nvim
+	excludesfile = ~/.config/git/ignore
+	pager = delta
+
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true
+	side-by-side = false
+[merge]
+	conflictstyle = zdiff3
+[diff]
+	colorMoved = default
+[rerere]
+	enabled = true
+[color]
+	ui = auto
+
+[alias]
+	st = status -sb
+	co = checkout
+	br = branch
+	ci = commit
+	amend = commit --amend --no-edit
+	lg = log --graph --oneline --decorate --all
+	last = log -1 HEAD
+	unstage = reset HEAD --
+	wip = !git add -A && git commit -m wip

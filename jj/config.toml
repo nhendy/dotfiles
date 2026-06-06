@@ -1,0 +1,10 @@
+# jj (Jujutsu) config -> ~/.config/jj/config.toml
+# Kept minimal/version-robust. See README for the colocated-with-git workflow.
+
+[user]
+name = "Nour Hendy"
+email = "nhendy997@gmail.com"
+
+[ui]
+default-command = "log"
+pager = "delta"
