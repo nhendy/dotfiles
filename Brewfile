@@ -3,6 +3,7 @@
 # --- Core CLI / editor / multiplexer ---
 brew "git"
 brew "neovim"
+brew "universal-ctags"  # tags backend for the nvim Tagbar outline (<leader>t)
 brew "tmux"
 
 # --- Fuzzy finding + modern unix replacements ---
