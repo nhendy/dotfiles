@@ -1,0 +1,12 @@
+# One extension id per line; installed into Cursor and VS Code by install.sh.
+asvetliakov.vscode-neovim
+anthropic.claude-code
+eamodio.gitlens
+njpwerner.autodocstring
+llvm-vs-code-extensions.vscode-clangd
+charliermarsh.ruff
+ms-python.python
+ms-python.debugpy
+ms-python.black-formatter
+ms-toolsai.jupyter
+myriad-dreamin.tinymist

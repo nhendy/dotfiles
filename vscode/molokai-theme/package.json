@@ -1,0 +1,15 @@
+{
+  "name": "molokai-nvim",
+  "displayName": "Molokai (nvim)",
+  "description": "Exact port of ~/.config/nvim/colors/monokai.vim (molokai, dark variant) as resolved by Neovim with treesitter + LSP semantic tokens.",
+  "version": "1.0.0",
+  "publisher": "nhendy",
+  "license": "MIT",
+  "engines": { "vscode": "^1.60.0" },
+  "categories": ["Themes"],
+  "contributes": {
+    "themes": [
+      { "label": "Molokai (nvim)", "uiTheme": "vs-dark", "path": "./themes/molokai-nvim-color-theme.json" }
+    ]
+  }
+}

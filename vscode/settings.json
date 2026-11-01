@@ -1,0 +1,112 @@
+// Shared by Cursor and VS Code (both symlink here; see install.sh phase_editors).
+//
+// Editing is done by real Neovim via vscode-neovim, which loads ~/.config/nvim.
+// Normal/visual-mode keys live in nvim's lua/config/keymaps.lua (the
+// `env.is_vscode` specs). Keys nvim never receives live in keybindings.json.
+{
+  // ── vscode-neovim ──────────────────────────────────────────────────────────
+  "vscode-neovim.neovimExecutablePaths.darwin": "/opt/homebrew/bin/nvim",
+  // Own extension host, so typing in nvim is never blocked by other extensions.
+  "extensions.experimental.affinity": { "asvetliakov.vscode-neovim": 1 },
+  // Default list minus h/j/k/l: VS Code owns C-hjkl for pane navigation
+  // (keybindings.json) so it works the same from editor, explorer and terminal.
+  "vscode-neovim.ctrlKeysForNormalMode": [
+    "a", "b", "c", "d", "e", "f", "i", "m", "o", "r", "t", "u", "v", "w",
+    "x", "y", "z", "/", "]", "right", "left", "up", "down", "backspace", "delete"
+  ],
+  // Insert mode is native VS Code, so nvim's `imap jk <Esc>` never fires.
+  "vscode-neovim.compositeTimeout": 300,
+  "vscode-neovim.compositeKeys": {
+    "jk": { "command": "vscode-neovim.escape" },
+    "jK": { "command": "vscode-neovim.escape" },
+    "Jk": { "command": "vscode-neovim.escape" },
+    "JK": { "command": "vscode-neovim.escape" },
+    "kj": { "command": "vscode-neovim.escape" },
+    "kJ": { "command": "vscode-neovim.escape" },
+    "Kj": { "command": "vscode-neovim.escape" },
+    "KJ": { "command": "vscode-neovim.escape" }
+  },
+
+  // ── Editor (mirrors nvim options.lua) ──────────────────────────────────────
+  "editor.lineNumbers": "relative",
+  "editor.cursorSurroundingLines": 8,
+  "editor.cursorBlinking": "solid",
+  "editor.scrollBeyondLastLine": false,
+  "editor.smoothScrolling": false,
+  "editor.tabSize": 4,
+  "editor.insertSpaces": true,
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.formatOnSave": false,
+  "editor.find.seedSearchStringFromSelection": "always",
+  "search.seedWithNearestWord": true,
+  "workbench.list.smoothScrolling": false,
+
+  // Exact port of nvim's colors/monokai.vim (molokai dark), built from
+  // vscode/molokai-theme by install.sh. nvim is always dark, so no OS auto-switch.
+  "window.autoDetectColorScheme": false,
+  "workbench.colorTheme": "Molokai (nvim)",
+  "workbench.preferredDarkColorTheme": "Molokai (nvim)",
+  "editor.semanticHighlighting.enabled": true,
+  // nvim has no 'cursorline' set; flip to "line" if you want the current line tinted.
+  "editor.renderLineHighlight": "none",
+
+  // Open files land in a real tab (no preview tab replaced on the next open),
+  // closer to nvim buffers.
+  "workbench.editor.enablePreview": false,
+  "workbench.editor.enablePreviewFromQuickOpen": false,
+
+  // NERDTreeIgnore equivalents.
+  "files.exclude": {
+    "**/*.pyc": true,
+    "**/__pycache__": true
+  },
+  "files.autoSave": "afterDelay",
+  "explorer.confirmDragAndDrop": false,
+
+  // ── Terminal ───────────────────────────────────────────────────────────────
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  // Let C-h/j/k/l (and the toggles) escape the shell instead of being sent to it.
+  "terminal.integrated.commandsToSkipShell": [
+    "workbench.action.navigateLeft",
+    "workbench.action.navigateRight",
+    "workbench.action.navigateUp",
+    "workbench.action.navigateDown",
+    "workbench.action.focusActiveEditorGroup",
+    "workbench.action.terminal.toggleTerminal"
+  ],
+
+  // ── Remote-SSH ─────────────────────────────────────────────────────────────
+  // Keys, theme and settings are UI-side, so they follow you to any host as-is.
+  // Keep vscode-neovim on the Mac too: it then uses the local nvim + ~/.config/nvim
+  // and the remote host needs no nvim at all.
+  "remote.extensionKind": {
+    "asvetliakov.vscode-neovim": ["ui"]
+  },
+  // Language tooling runs next to the code; auto-install it on every new host.
+  "remote.SSH.defaultExtensions": [
+    "ms-python.python",
+    "ms-python.debugpy",
+    "ms-python.black-formatter",
+    "charliermarsh.ruff",
+    "ms-toolsai.jupyter",
+    "eamodio.gitlens",
+    "njpwerner.autodocstring",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "myriad-dreamin.tinymist",
+    "anthropic.claude-code"
+  ],
+
+  // ── Language / tools ───────────────────────────────────────────────────────
+  "autoDocstring.docstringFormat": "google",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+
+  // ── Cursor-only (ignored by VS Code) ───────────────────────────────────────
+  "cursor.cpp.enablePartialAccepts": true,
+  // Keep Cursor's AI chat off Ctrl+K (pane navigation).
+  "cursor.aiChat.openAIChatKeyBinding": "cmd+shift+k"
+}

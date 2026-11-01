@@ -114,6 +114,7 @@ phase6_git_jj() {
   link "$DOTFILES/git/gitconfig"        "$HOME/.gitconfig"
   link "$DOTFILES/git/gitignore_global" "$HOME/.config/git/ignore"
   link "$DOTFILES/jj/config.toml"       "$HOME/.config/jj/config.toml"
+  link "$DOTFILES/clangd/config.yaml"   "$HOME/.config/clangd/config.yaml"  # clangd fallback flags
   ok "git + jj configured ($(git config --global user.email))"
 }
 
@@ -162,6 +163,33 @@ Validate everything:  ${c_blue}$DOTFILES/validate.sh${c_reset}
 EOF
 }
 
+phase9_editors() {
+  log "Phase 9 — Cursor / VS Code (vscode-neovim, nvim keymaps)"
+  local cli dir theme_vsix
+  theme_vsix="$(mktemp -d)/molokai-nvim.vsix"
+  "$DOTFILES/vscode/molokai-theme/build_vsix.sh" "$theme_vsix" >/dev/null
+  for cli in cursor code; do
+    command -v "$cli" >/dev/null 2>&1 || { warn "$cli CLI not on PATH; skipping"; continue; }
+    case "$cli" in
+      cursor) dir="$HOME/Library/Application Support/Cursor/User" ;;
+      code)   dir="$HOME/Library/Application Support/Code/User" ;;
+    esac
+    link "$DOTFILES/vscode/settings.json"    "$dir/settings.json"
+    link "$DOTFILES/vscode/keybindings.json" "$dir/keybindings.json"
+    # VSCodeVim fights vscode-neovim for every key; which-key menus were for it.
+    local old
+    for old in vscodevim.vim vspacecode.whichkey; do
+      "$cli" --uninstall-extension "$old" >/dev/null 2>&1 && ok "$cli: removed $old" || true
+    done
+    local ext
+    while IFS= read -r ext; do
+      case "$ext" in ''|'#'*) continue ;; esac
+      "$cli" --install-extension "$ext" >/dev/null 2>&1 && ok "$cli: $ext" || warn "$cli: failed to install $ext"
+    done < "$DOTFILES/vscode/extensions.txt"
+    "$cli" --install-extension "$theme_vsix" --force >/dev/null 2>&1 && ok "$cli: Molokai (nvim) theme" || warn "$cli: theme install failed"
+  done
+}
+
 main() {
   phase0_preflight
   phase1_homebrew
@@ -172,6 +200,7 @@ main() {
   phase6_git_jj
   phase7_python_uv
   phase8_fonts
+  phase9_editors
   summary
 }
 main "$@"
