@@ -6,8 +6,22 @@ if [[ -x /opt/homebrew/bin/brew ]]; then
   eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 export PATH="$HOME/.local/bin:$PATH"     # keep ~/.local/bin (Claude Code, uv tools)
+export PATH="$HOME/.local/go/bin:$HOME/go/bin:$PATH"  # go toolchain + `go install` bins (gopls, etc.)
 export EDITOR="nvim"
 export VISUAL="nvim"
+
+# --- Rust (rustup) -----------------------------------------------------------
+# Homebrew's rustup is keg-only and ships the toolchain proxies (cargo, rustc,
+# rust-analyzer, ...) in its own bin dir; it no longer provides rustup-init.
+# These proxies resolve the toolchain from the nearest rust-toolchain.toml, so
+# nvim's rust-analyzer always matches the project pin. ~/.cargo/bin is separate:
+# it holds binaries from `cargo install`.
+export PATH="/opt/homebrew/opt/rustup/bin:$HOME/.cargo/bin:$PATH"
+
+# --- C/C++ -------------------------------------------------------------------
+# Every cmake configure emits compile_commands.json, which is what clangd needs
+# for real goto-definition. See :CompileCommands / :BazelCompileCommands in nvim.
+export CMAKE_EXPORT_COMPILE_COMMANDS=1
 
 # --- History -----------------------------------------------------------------
 HISTFILE="$HOME/.zsh_history"
@@ -22,6 +36,9 @@ export KEYTIMEOUT=20
 bindkey -M viins 'jk' vi-cmd-mode
 
 # --- Completion --------------------------------------------------------------
+# zsh-completions: extra completion defs — must be on fpath BEFORE compinit runs.
+[[ -d "$HOMEBREW_PREFIX/share/zsh-completions" ]] && \
+  fpath=("$HOMEBREW_PREFIX/share/zsh-completions" $fpath)
 autoload -Uz compinit
 compinit -d "$HOME/.zcompdump"
 zstyle ':completion:*' menu no                                   # fzf-tab takes over the menu
@@ -52,8 +69,43 @@ command -v uv >/dev/null 2>&1 && eval "$(uv generate-shell-completion zsh)"
 # aliases
 [[ -r "$HOME/dotfiles/zsh/aliases.zsh" ]] && source "$HOME/dotfiles/zsh/aliases.zsh"
 
-# autosuggestions, then syntax-highlighting MUST be sourced last
+# forgit — interactive git via fzf (ga, glo, gd, gco, gss, gbd, gclean, ...).
+# Sourced AFTER aliases.zsh on purpose: forgit owns `gd` and `gco`, so loading
+# it last keeps that ownership unambiguous even if aliases.zsh regrows them.
+# Picks up delta automatically from git's core.pager. `git forgit <cmd>` also
+# works without the aliases; set FORGIT_NO_ALIASES=1 to suppress them entirely.
+[[ -r "$HOMEBREW_PREFIX/share/forgit/forgit.plugin.zsh" ]] && \
+  source "$HOMEBREW_PREFIX/share/forgit/forgit.plugin.zsh"
+
+# zsh-you-should-use — nags when a command has an alias you defined.
+# Hooks preexec only (no ZLE widgets), so load order is not critical here.
+[[ -r "$HOMEBREW_PREFIX/share/zsh-you-should-use/you-should-use.plugin.zsh" ]] && \
+  source "$HOMEBREW_PREFIX/share/zsh-you-should-use/you-should-use.plugin.zsh"
+
+# autosuggestions, then syntax-highlighting. NOTE: history-substring-search and
+# zsh-abbr below MUST be sourced AFTER syntax-highlighting (per their own docs),
+# so syntax-highlighting is no longer literally the last source line.
 [[ -r "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
   source "$HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [[ -r "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
   source "$HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# zsh-history-substring-search — type a substring, walk matches with Up/Down.
+# Must load AFTER syntax-highlighting. k/j search in vi-cmd mode too.
+if [[ -r "$HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh" ]]; then
+  source "$HOMEBREW_PREFIX/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
+  bindkey -M viins '^[[A' history-substring-search-up      # Up arrow
+  bindkey -M viins '^[[B' history-substring-search-down    # Down arrow
+  bindkey -M vicmd '^[[A' history-substring-search-up
+  bindkey -M vicmd '^[[B' history-substring-search-down
+  bindkey -M vicmd 'k'    history-substring-search-up      # vi-cmd k/j
+  bindkey -M vicmd 'j'    history-substring-search-down
+fi
+
+# zsh-abbr — fish-style inline abbreviations (`abbr gco='git checkout'`).
+# Also loads AFTER syntax-highlighting. Run `abbr` for help; abbrs persist to disk.
+[[ -r "$HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh" ]] && \
+  source "$HOMEBREW_PREFIX/share/zsh-abbr/zsh-abbr.zsh"
+
+# For SkyPilot shell completion
+. ~/.sky/.sky-complete.zsh

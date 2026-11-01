@@ -45,3 +45,9 @@
 	last = log -1 HEAD
 	unstage = reset HEAD --
 	wip = !git add -A && git commit -m wip
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential

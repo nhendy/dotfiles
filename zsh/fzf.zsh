@@ -1,5 +1,7 @@
 # fzf.zsh — fzf options + helpers, sourced by ~/.zshrc.
-# Cleaned/modernized rewrite of the old .fzf_config.sh (ag/forgit/cd-override removed).
+# Cleaned/modernized rewrite of the old .fzf_config.sh (ag/cd-override removed).
+# forgit was dropped in that rewrite too, but is back as of 2026-09-21 -- it now
+# loads from zshrc as a Homebrew plugin instead of being vendored here.
 
 # Use fd for the default file/dir sources (respects .gitignore, hidden, fast).
 if command -v fd >/dev/null 2>&1; then

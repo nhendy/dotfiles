@@ -30,3 +30,5 @@ venv/
 # Logs / data scratch
 *.log
 wandb/
+
+**/.claude/settings.local.json

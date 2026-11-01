@@ -1,0 +1,27 @@
+# Global clangd fallback config (~/.config/clangd/config.yaml).
+#
+# A per-project compile_commands.json always wins over this file. This is what
+# keeps standalone files and header-only projects -- anything with no compilation
+# database at all -- resolving instead of erroring on <vector>.
+#
+# Per-repo overrides go in a .clangd file at the repo root, e.g. for Bazel:
+#   CompilationDatabase: .
+
+CompileFlags:
+  Add: [-std=c++20, -Wall, -Wextra]
+  Compiler: clang++
+
+Index:
+  Background: Build
+  StandardLibrary: Yes
+
+InlayHints:
+  Enabled: true
+  ParameterNames: true
+  DeducedTypes: true
+
+Diagnostics:
+  UnusedIncludes: Strict
+  ClangTidy:
+    Add: [performance-*, bugprone-*, modernize-use-override]
+    Remove: [modernize-use-trailing-return-type]
